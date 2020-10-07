@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class Lesson4 {
     private static char[][] map;
-    private static final int SIZE = 5; // размер поля
-    private static final int WIN_LENGTH = 4; // количество фишек в один ряд для победы
+    private static final int SIZE = 3; // размер поля
+    private static final int WIN_LENGTH = 3; // количество фишек в один ряд для победы
 
     private static final char DOT_X = 'X';
     private static final char DOT_0 = '0';
@@ -22,7 +22,7 @@ public class Lesson4 {
         // 2. Выбор игральной фишки. - ДОП К ДЗ
         inputDot();
         // в цикле
-        for (int i = 0; i< (SIZE*SIZE+1)/2; i++) {
+        for (int i = 0; i < (SIZE * SIZE + 1) / 2; i++) {
             // 3. Ход первого игрока.
             makeHumanStep();
             // 4. Вывод поля.
@@ -57,22 +57,22 @@ public class Lesson4 {
     private static void initMap() {
         map = new char[SIZE][SIZE];
 
-        for (int i=0; i<map.length; i++) {
-            for (int j=0; j<map[i].length; j++) {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[i].length; j++) {
                 map[i][j] = DOT_EMPTY;
             }
         }
     }
 
     private static void printMap() {
-        for (int i=0; i<=SIZE; i++) {
+        for (int i = 0; i <= SIZE; i++) {
             System.out.print(i + " ");
         }
         System.out.println();
-        for (int i=0; i<SIZE; i++) {
-            System.out.print((i+1) + " ");
-            for (int j=0; j<SIZE; j++) {
-                System.out.print(map[i][j]+" ");
+        for (int i = 0; i < SIZE; i++) {
+            System.out.print((i + 1) + " ");
+            for (int j = 0; j < SIZE; j++) {
+                System.out.print(map[i][j] + " ");
             }
             System.out.println();
         }
@@ -99,17 +99,17 @@ public class Lesson4 {
         int y;
 
         do {
-            System.out.println("Введите координаты от 1 до "+SIZE+", ячейка должна буть пустой:");
-            x = getIntFormConsole()-1;
-            y = getIntFormConsole()-1;
-        } while(!isCellValid(x,y));
+            System.out.println("Введите координаты от 1 до " + SIZE + ", ячейка должна буть пустой:");
+            x = getIntFormConsole() - 1;
+            y = getIntFormConsole() - 1;
+        } while (!isCellValid(x, y));
 
         map[y][x] = dotHuman;
     }
 
     private static boolean hasWin(char dot) {
         String winStr = "";
-        for (int i = 0; i< WIN_LENGTH; i++) {
+        for (int i = 0; i < WIN_LENGTH; i++) {
             winStr += dot;
         }
         return (foundLine(dot, winStr)[0].equals("1"));
@@ -130,12 +130,12 @@ public class Lesson4 {
         // индекс 3 - координата X (по логике java, т.е. j)
         // индекс 4 - найденная линия
         String[] foundLine = new String[5];
-        for (int i = 0; i<5; i++) {
+        for (int i = 0; i < 5; i++) {
             foundLine[i] = "0";
         }
 
         // проверка строк и столбцов
-        for (int i=0; i<map.length; i++) {
+        for (int i = 0; i < map.length; i++) {
             row = "";
             col = "";
             for (int j = 0; j < map[i].length; j++) {
@@ -150,7 +150,7 @@ public class Lesson4 {
             }
         }
         // проверка всех диагоналей, не только главных
-        for (int i=0; i<map.length; i++) {
+        for (int i = 0; i < map.length; i++) {
             diagLeft1 = "";
             diagLeft2 = "";
             diagRight1 = "";
@@ -160,8 +160,8 @@ public class Lesson4 {
                 diagLeft2 += map[j][i + j];
             }
             for (int j = 0; j <= i; j++) {
-                diagRight1 += map[i-j][j];
-                diagRight2 += map[map.length-1-j][map[i].length-1-i+j];
+                diagRight1 += map[i - j][j];
+                diagRight2 += map[map.length - 1 - j][map[i].length - 1 - i + j];
             }
             if (fillLine(foundLine, 3, diagLeft1, line, i)) {
                 return foundLine;
@@ -189,7 +189,7 @@ public class Lesson4 {
                     // строка
                     lineArray[1] = "1";
                     lineArray[2] = String.valueOf(i);
-                    lineArray[3] = "0";
+                    lineArray[3] = String.valueOf(0);
                     break;
                 case 2:
                     // колонка
@@ -218,8 +218,8 @@ public class Lesson4 {
                 case 6:
                     // диагональ правая 2
                     lineArray[1] = "4";
-                    lineArray[2] = String.valueOf(map.length-1);
-                    lineArray[3] = String.valueOf(map[i].length-1-i);
+                    lineArray[2] = String.valueOf(map.length - 1);
+                    lineArray[3] = String.valueOf(map[i].length - 1 - i);
                     break;
                 default:
                     lineArray[1] = "0";
@@ -243,109 +243,68 @@ public class Lesson4 {
     }
 
     private static void makeAiStep() {
-        int x=0;
-        int y=0;
+        int x;
+        int y;
 
-        String[] receivedLine = new String[5];
-        //String testLine;
-        //boolean blockStep = false;
+        String[] receivedLine;
         // 1. проверка, нет ли победного хода
-        receivedLine = findStep(receivedLine, WIN_LENGTH, dotAi)[0].equals("1");
-        if (findStep(receivedLine, WIN_LENGTH, dotAi)[0].equals("1")) {
+        receivedLine = findStep(dotAi);
+        if (receivedLine[0].equals("1")) {
             x = getX(receivedLine);
             y = getY(receivedLine);
-        } else if (findStep(receivedLine, 2, dotHuman)[0].equals("1")) {
-            // 2. Блокируем ход противника
-            x = getX(receivedLine);
-            y = getY(receivedLine);
-
-//            if (isCellValid(x, y)) {
-//                blockStep = true;
-//            }
-
+            System.out.println("Нашел победный ход!!!");
+            if (!isCellValid(x, y)) {
+                System.out.println("ошибка x " + (x + 1) + " y " + (y + 1));
+            }
         } else {
-
-//        for (int i=WIN_LENGTH-1; i>1; i--) {
-//
-//            for (int j=0; j<WIN_LENGTH; j++) {
-//                // подготовка искомой линии, которую мог построить противник
-//                testLine = "";
-//                for (int k = 0; k <= i; k++) {
-//                    if (k==j) {
-//                        testLine += DOT_EMPTY;
-//                    }
-//                    else {
-//                        testLine += dotHuman;
-//                    }
-//                }
-//
-//                receivedLine = foundLine(dotHuman, testLine);
-//                if (receivedLine[0].equals("1")) {
-//                    // ищем пустые ячейки на этой линии
-//                    x = getX(receivedLine);
-//                    y = getY(receivedLine);
-//                    //System.out.println("x="+(y+1)+"  y="+(x+1));
-//                    if (isCellValid(x, y)) {
-//                        blockStep = true;
-//                        break;
-//                    }
-//                }
-//            }
-//            if (blockStep) {
-//                break;
-//            }
-//        }
-
-        // 3. если блокировать нечего, ходим наугад
-//        if (!blockStep) {
-            do {
-                x = (int) (Math.random() * SIZE);
-                y = (int) (Math.random() * SIZE);
-            } while (!isCellValid(x, y));
+            // 2. Блокируем ход противника
+            receivedLine = findStep(dotHuman);
+            if (receivedLine[0].equals("1")) {
+                x = getX(receivedLine);
+                y = getY(receivedLine);
+                System.out.println("Блокирую Ваш план...");
+                if (!isCellValid(x, y)) {
+                    System.out.println("ошибка x " + (x + 1) + " y " + (y + 1));
+                }
+            } else {
+                // 3. если блокировать нечего, ходим наугад
+                do {
+                    System.out.println("Хожу наугад))");
+                    x = (int) (Math.random() * SIZE);
+                    y = (int) (Math.random() * SIZE);
+                } while (!isCellValid(x, y));
+            }
         }
-        System.out.println("Компьютер походил по координатам: " + (x+1) + " " + (y+1));
+        System.out.println("Компьютер походил по координатам: " + (x + 1) + " " + (y + 1));
         map[y][x] = dotAi;
     }
 
-    private static String[] findStep(String[] receivedLine, int minRange, char dot) {
+    private static String[] findStep(char dot) {
         String testLine;
+        String[] receivedLine = new String[5];
         receivedLine[0] = "0";
-        for (int i=WIN_LENGTH-1; i>=minRange; i--) {
 
-            for (int j=0; j<WIN_LENGTH; j++) {
-                // подготовка искомой линии, которую мог построить противник
-                testLine = "";
-                for (int k = 0; k <= i; k++) {
-                    if (k==j) {
-                        testLine += DOT_EMPTY;
-                    }
-                    else {
-                        testLine += dot;
-                    }
-                }
-
-                receivedLine = foundLine(dot, testLine);
-                if (receivedLine[0].equals("1")) {
-                    return receivedLine;
-                    // ищем пустые ячейки на этой линии
-//                    x = getX(receivedLine);
-//                    y = getY(receivedLine);
-//                    //System.out.println("x="+(y+1)+"  y="+(x+1));
-//                    if (isCellValid(x, y)) {
-//                        blockStep = true;
-//                        break;
-//                    }
+        for (int j = 0; j < WIN_LENGTH; j++) {
+            // подготовка искомой линии, которую мог построить противник
+            testLine = "";
+            for (int k = 0; k < WIN_LENGTH; k++) {
+                if (k == j) {
+                    testLine += DOT_EMPTY;
+                } else {
+                    testLine += dot;
                 }
             }
-//            if (blockStep) {
-//                break;
-//            }
+
+            receivedLine = foundLine(dot, testLine);
+            if (receivedLine[0].equals("1")) {
+                return receivedLine;
+            }
         }
         return receivedLine;
     }
 
     private static int getX(String[] line) {
-        int vid = Integer.valueOf(line[1]);
+        int vid = Integer.parseInt(line[1]);
 
         switch (vid) {
             case 1:
@@ -353,34 +312,33 @@ public class Lesson4 {
                 return line[4].indexOf(DOT_EMPTY);
             case 2:
                 // если это колонка
-                return Integer.valueOf(line[3]);
+                return Integer.parseInt(line[3]);
             case 3:
-                // если это левая диагональ
-                return Integer.valueOf(line[3]) + line[4].indexOf(DOT_EMPTY);
             case 4:
                 // если это правая диагональ
-                return Integer.valueOf(line[3]) - line[4].indexOf(DOT_EMPTY);
+                // если это левая диагональ
+                return Integer.parseInt(line[3]) + line[4].indexOf(DOT_EMPTY);
             default:
                 return 0;
         }
     }
 
     private static int getY(String[] line) {
-        int vid = Integer.valueOf(line[1]);
+        int vid = Integer.parseInt(line[1]);
 
         switch (vid) {
             case 1:
                 // если это строка
-                return Integer.valueOf(line[2]);
+                return Integer.parseInt(line[2]);
             case 2:
                 // если это колонка
                 return line[4].indexOf(DOT_EMPTY);
             case 3:
                 // если это левая диагональ
-                return Integer.valueOf(line[2]) + line[4].indexOf(DOT_EMPTY);
+                return Integer.parseInt(line[2]) + line[4].indexOf(DOT_EMPTY);
             case 4:
                 // если это правая диагональ
-                return Integer.valueOf(line[2]) - line[4].indexOf(DOT_EMPTY);
+                return Integer.parseInt(line[2]) - line[4].indexOf(DOT_EMPTY);
             default:
                 return 0;
         }
@@ -398,7 +356,7 @@ public class Lesson4 {
     }
 
     private static boolean isCellValid(int x, int y) {
-        if (x>=0 && x<SIZE && y>=0 && y<SIZE) {
+        if (x >= 0 && x < SIZE && y >= 0 && y < SIZE) {
             return map[y][x] == DOT_EMPTY;
         } else {
             return false;
@@ -406,7 +364,7 @@ public class Lesson4 {
     }
 
     private static boolean isDotValid(String dot) {
-        return (dot.length()==1 && (dot.charAt(0)==DOT_X || dot.charAt(0)==DOT_0));
+        return (dot.length() == 1 && (dot.charAt(0) == DOT_X || dot.charAt(0) == DOT_0));
     }
 
 }
