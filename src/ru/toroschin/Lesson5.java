@@ -10,8 +10,8 @@ public class Lesson5 {
         persArray[4] = new Person("Федоров Иван Петрович","Директор","fedorov@mail.ru", "89005550505",150500,59);
 
         System.out.println("Сотрудники старше 40 лет:");
-        for (int i=0; i<persArray.length; i++) {
-            if (persArray[i].age>40) {
+        for (int i = 0; i < persArray.length; i++) {
+            if (persArray[i].age > 40) {
                 persArray[i].OutputInConsole();
             }
         }

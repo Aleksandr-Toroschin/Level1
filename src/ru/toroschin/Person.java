@@ -1,11 +1,11 @@
 package ru.toroschin;
 
 public class Person {
-    private String fio;
-    private String position;
-    private String email;
-    private String phone;
-    private double salary;
+    public String fio;
+    public String position;
+    public String email;
+    public String phone;
+    public double salary;
     public int age;
 
     public Person(String fio, String position, String email, String phone, double salary, int age) {
