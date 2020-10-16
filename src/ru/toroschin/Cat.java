@@ -1,18 +1,29 @@
 package ru.toroschin;
 
-public class Cat extends Animal {
+public class Cat {
+    private String name;
+    private int appetite;
+    private boolean fullness;
 
-    public Cat(String name) {
-        super(name, 200, 2, 0);
+    Cat(String name, int appetite) {
+        this.name = name;
+        this.appetite = appetite;
+        fullness = false;
     }
 
-    public Cat(String name, double limitOnRun, double limitOnJump, double limitOnSwim) {
-        super(name, limitOnRun, limitOnJump, limitOnSwim);
+    public void eat(Plate plate) {
+        if (!fullness) {
+            fullness = plate.isEnoughFood(appetite);
+            plate.decreaseFood(appetite);
+        }
     }
 
-    @Override
-    public void swim(double length) {
-        System.out.println("Кот не умеет плавать!");
+    public void printInfo() {
+        if (fullness) {
+            System.out.println("Кот "+name+" сытый!");
+        } else {
+            System.out.println("Кот "+name+" голодный.");
+        }
     }
 
 }
